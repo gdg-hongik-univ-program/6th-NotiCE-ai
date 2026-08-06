@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -106,6 +107,23 @@ class QueryPreprocessorTests(unittest.TestCase):
         self.assertEqual(
             preprocessor.normalize("과사 어디야?"),
             "컴퓨터공학과 학과사무실 어디야?",
+        )
+
+    def test_fallback_removes_colloquial_when_question_stopword(self):
+        preprocessor = QueryPreprocessor({
+            "곤골": "알고리즘분석 김상곤",
+        })
+
+        with patch("rag.src.preprocess._get_kiwi", return_value=None):
+            processed = preprocessor.process("곤골 기말 언제냐")
+
+        self.assertEqual(
+            processed.normalized,
+            "알고리즘분석 김상곤 기말 언제냐",
+        )
+        self.assertEqual(
+            processed.keywords,
+            ("알고리즘분석", "김상곤", "기말"),
         )
 
 
