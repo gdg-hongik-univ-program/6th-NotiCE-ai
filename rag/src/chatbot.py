@@ -33,6 +33,7 @@ from .search import (
     get_relevant_notices,
     hydrate_result_notice,
     is_recent_sort_request,
+    resolve_relative_time_expression,
     search_notices,
     should_answer_without_selection,
     sort_notices_by_published_at,
@@ -364,9 +365,12 @@ class ChatbotService:
             )
 
         intent = route_to_intent(plan.route)
+        resolved_search_query = resolve_relative_time_expression(
+            plan.search_query
+        )
         processed_query = replace(
             processed_query,
-            normalized=plan.search_query,
+            normalized=resolved_search_query,
         )
 
         resolution = conversation.resolve(processed_query, intent)

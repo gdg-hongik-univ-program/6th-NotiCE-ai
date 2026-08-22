@@ -797,13 +797,19 @@ def main() -> None:
             continue
 
         intent = route_to_intent(plan.route)
+        resolved_search_query = resolve_relative_time_expression(plan.search_query)
         processed_query = replace(
             processed_query,
-            normalized=plan.search_query,
+            normalized=resolved_search_query,
         )
 
         resolution = conversation.resolve(processed_query, intent)
         resolved_question = resolution.search_question
+        
+        keywords = preprocessor.extract_keywords(
+            resolution.search_question
+        )
+        print(f"추출 키워드: {keywords}")
 
         if intent == QueryIntent.MORE_RESULTS:
             answer_question = resolution.search_question
