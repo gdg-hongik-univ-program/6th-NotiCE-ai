@@ -132,7 +132,7 @@ class QueryPreprocessor:
             re.compile(
                 r"(?<![0-9A-Za-z가-힣])(?:"
                 + "|".join(re.escape(alias) for alias in sorted_aliases)
-                + r")"
+                + r")(?![0-9A-Za-z가-힣])"
             )
             if sorted_aliases
             else None
